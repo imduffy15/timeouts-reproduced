@@ -54,6 +54,7 @@ public class LagTracker {
 
     public long update() {
         logger.info("Updating offsets");
+        logger.info("Getting consumer group offsets");
         try {
             kafkaAdminClient.listConsumerGroupOffsets(
                     groupId,
@@ -65,16 +66,20 @@ public class LagTracker {
                     );
         } catch (InterruptedException | ExecutionException e) {
             logger.warn("Admin client failed:", e);
+            return -1;
         }
 
+
         try {
+            logger.info("Getting end offsets");
             ((Map<TopicPartition, Long>) kafkaConsumer.endOffsets(partitions))
                     .forEach(latestLogEndOffsets::put);
         } catch (Exception e) {
             logger.warn("Kafka consumer failed:", e);
+            return -1;
         }
 
-        return latestConsumerGroupOffsets.entrySet()
+        return latestLogEndOffsets.entrySet()
                 .stream()
                 .map((entry) -> Math.max(0, entry.getValue()) - Math.max(0, latestConsumerGroupOffsets.get(entry.getKey())))
                 .mapToLong(a -> a).sum();

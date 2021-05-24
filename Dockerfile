@@ -11,6 +11,7 @@ RUN gradle installDist
 FROM openjdk:11-slim-buster
 
 COPY --from=0 /opt/timeouts-reproduced/build/install/timeouts-reproduced /opt/timeouts-reproduced
+COPY java.security $JAVA_HOME/jre/lib/security/java.security
 
 WORKDIR /opt/timeouts-reproduced
 EXPOSE 8080
