@@ -37,5 +37,5 @@ $ kafka-console-consumer --consumer.config kafka.properties --bootstrap-server b
 Simulate restarts with:
 
 ```
-$ while true; do (docker restart $(docker ps | grep cp-server | awk '{print $1}' | shuf)); sleep 5000 ;done
+$ ./broker-restarter.sh
 ```
